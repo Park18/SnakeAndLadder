@@ -1,5 +1,8 @@
+import game.GameCenter;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("test");
+        GameCenter gameCenter = new GameCenter();
+        gameCenter.play();
     }
 }
