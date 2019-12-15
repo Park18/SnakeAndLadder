@@ -120,7 +120,7 @@ public class GameCenter {
      */
     public void play(){
         while(true){
-            for(int playerIndex = 0; playerIndex < playerCount; playerIndex++){
+            for(int playerIndex = 0; playerIndex < this.playerCount; playerIndex++){
                 if(this.players[playerIndex] instanceof UserPlayer){
                     if(this.command.commandSystem(this.players, playerIndex, this.gameBoard))
                         return;
