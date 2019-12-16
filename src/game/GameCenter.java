@@ -4,6 +4,7 @@ import game.player.BasePlayer;
 import game.player.ComputerPlayer;
 import game.player.UserPlayer;
 
+import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -15,11 +16,13 @@ public class GameCenter {
     /*------------------------------------------------------------
      * 변수
      *------------------------------------------------------------*/
+    private static int rankding = 0;                    // 플레이어 랭킹
+
     private BasePlayer[] players;                       // 플레이어 저장 배열
     private int playerCount;                            // 플레이어 인원수
     private GameBoard[] gameBoard = new GameBoard[100]; // 게임 보드판 (크기 100)
     private Scanner scanner = new Scanner(System.in);   // Console 자원
-    private Command command = new Command();
+    private Command command = new Command();            // 명령어 객체
 
     /*------------------------------------------------------------
      * 메소드
@@ -120,15 +123,61 @@ public class GameCenter {
      */
     public void play(){
         while(true){
+            // 플레이어들을 순환하여 플레이한다.
             for(int playerIndex = 0; playerIndex < this.playerCount; playerIndex++){
+
+                // 플레이어의 랭킹이 기본값(0)이 아니면 결승점에 도착한 것이므로
+                // continue 를 한다.
+                if(this.players[playerIndex].getRanking() != 0)
+                    continue;
+
+                // players[playerIndex]가 UserPlayer 인스턴스일 때
                 if(this.players[playerIndex] instanceof UserPlayer){
+
+                    // 플레이어가 사람이므로 명령어 시스템을 실행한다.
                     if(this.command.commandSystem(this.players, playerIndex, this.gameBoard))
                         return;
                 }
 
+                // players[playerIndex]가 UserPlayer 인스턴스가 아닐 때
                 else
                     this.players[playerIndex].play(this.gameBoard);
+
+                // 플레이어의 위치가 100(결승점)이 되면
+                if(this.players[playerIndex].getPos() >= 100){
+                    System.out.println(this.players[playerIndex].getPlayerID() + "플레이어님이 결승점에 도착했습니다..");
+
+                    // 플레이어 랭킹을 1 증가 시킨후
+                    // 플레이어에게 랭킹을 설정한다.
+                    this.rankding += 1;
+                    this.players[playerIndex].setRanking(this.rankding);
+                }
+
+                // 플레이어 랭킹이 인원수와 같아진다면
+                // 게임을 종료한다.
+                if(this.rankding == this.playerCount)
+                    return;
             }
+        }
+    }
+
+    /**
+     * 플레이어의 순위를 출력하는 메소드
+     */
+    public void printRanking(){
+        // key:     순위
+        // value:   플레이어 인덱스
+        HashMap<Integer, Integer> playerRanking = new HashMap<>();
+
+        // playerRanking(Map) 에 값을 설정한다.
+        for(int playerIndex = 0; playerIndex < this.playerCount; playerIndex++)
+            playerRanking.put(this.players[playerIndex].getRanking(), this.players[playerIndex].getPlayerID());
+
+        // playerRanking(Map)에서 순위(키)의 값을 가져와서
+        // 순위별로 출력한다.
+        for(int ranking = 1; ranking <= this.playerCount; ranking++){
+            int playerIndex = playerRanking.get(ranking);
+            System.out.println(ranking + "등: " + this.players[playerIndex].getPlayerID() + "플레이어");
         }
     }
 }

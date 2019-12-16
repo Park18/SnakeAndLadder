@@ -14,15 +14,21 @@ public abstract class BasePlayer {
      *------------------------------------------------------------*/
     protected int playerID;                 // 플레이어 아이디
     protected int pos;                      // 플레이어 위치
+    protected int ranking;                  // 플레이어 순위
     protected Random dice = new Random();   // 랜덤 생성기
 
     /*------------------------------------------------------------
      * 메소드
      *------------------------------------------------------------*/
 
+    /**
+     * BasePlayer 생성자
+     * @param playerID 플레이어 아이디
+     */
     BasePlayer(int playerID){
         setPlayerID(playerID);
         setPos(0);
+        setRanking(0);
     }
 
     /**
@@ -42,6 +48,14 @@ public abstract class BasePlayer {
     }
 
     /**
+     * ranking Set 메소드
+     * @param ranking 플레이어의 최종 순위
+     */
+    public void setRanking(int ranking){
+        this.ranking = ranking;
+    }
+
+    /**
      * playerId get 메소드
      * @return 플레이어 아이디
      */
@@ -55,6 +69,14 @@ public abstract class BasePlayer {
      */
     public int getPos() {
         return pos;
+    }
+
+    /**
+     * ranking Get 메소드
+     * @return
+     */
+    public int getRanking(){
+        return ranking;
     }
 
     /**

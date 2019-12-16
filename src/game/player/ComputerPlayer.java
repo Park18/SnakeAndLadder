@@ -3,6 +3,9 @@ package game.player;
 import game.GameBoard;
 
 public class ComputerPlayer extends BasePlayer{
+    /*------------------------------------------------------------
+     * 五社球
+     *------------------------------------------------------------*/
 
     /**
      * ComputerPlayer 持失切

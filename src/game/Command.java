@@ -5,8 +5,14 @@ import game.player.BasePlayer;
 import java.util.Scanner;
 
 public class Command {
-    private Scanner scanner = new Scanner(System.in);
+    /*------------------------------------------------------------
+     * 변수
+     *------------------------------------------------------------*/
+    private Scanner scanner = new Scanner(System.in);   // Console 자원
 
+    /*------------------------------------------------------------
+     * 메소드
+     *------------------------------------------------------------*/
     /**
      * 명령어 시스템 메소드
      * @param players 플레이어 배열
@@ -24,20 +30,18 @@ public class Command {
             command = this.scanner.nextLine();
 
             action = commandAction(command);
+
+            // 옳바른 명령어 일 때
             if(commandCheck(command, action)){
 
                 // action 이 roll 일 때
                 if(action.equals("roll")){
 
                     // 플레이어가 주사위를 굴린다. (반환값 true: 실행 취소 / false: 계속 실행)
+                    // 실행 취소를 반환 하면 다시 명령어를 받는다.
+                    // 계속 실행을 반환하면 false 를 반환하여 미종료 의사를 반환한다.
                     if(playerRoll(players[nowPlayerIndex], gameBoard))
                         continue;
-
-                    // 플레이어의 위치가 100 이상이면 승리
-                    if(players[nowPlayerIndex].getPos() >= 100){
-                        System.out.println(players[nowPlayerIndex].getPlayerID() + "플레이어님이 승리했습니다.");
-                        return true;
-                    }
 
                     return false;
                 }
@@ -57,19 +61,26 @@ public class Command {
                         playerInfo(players[Integer.parseInt(player)], gameBoard);
 
                     } catch (NumberFormatException numberFormatException){
-                        System.out.println("잘못된 명령어 입니다.");
+                        System.out.println("잘못된 명령어 입니다. 다시 입력해주세요.\n");
                     }
                 }
 
                 //action 이 exit 일 떼
                 else if(action.equals("exit")){
-                    System.out.println("<" + players[nowPlayerIndex].getPlayerID() + "플레이어님이 종료합니다.>");
+                    System.out.println("<" + players[nowPlayerIndex].getPlayerID() + "플레이어님이 종료합니다.>\n");
                     return true;
                 }
 
+                // action 이 roll, pos, checkInfo, exit 가 아닐 때
+                // 오류 출력
                 else
-                    System.out.println("잘못된 명령어 입니다. 다시 입력해주세요.");
+                    System.out.println("잘못된 명령어 입니다. 다시 입력해주세요.\n");
             }
+
+            // 잘못된 명령어 일 때
+            // 오류 츨력력
+            else
+               System.out.println("잘못된 명령어 입니다. 다시 입력해주세요.\n");
         }
     }
 
@@ -93,8 +104,10 @@ public class Command {
             if(action.equals("roll") || action.equals("pos") || action.equals("exit"))
                 return false;
 
-            // 분기점을 가지는 action 에서 또다른 분기점이 있으면
-            // 잘못된 명령엉이다.
+            // 명령어에 분기점이 있을 때
+            // 또 다른 분기점이 있으면
+            // 잘못된 명령어이다.
+            // 분기점이 있는 명령어는 checkInfo 뿐이다.
             else if(action.equals("checkInfo")){
                 String tmpCommand = command.substring(blankIndex + 1, command.length());
                 blankIndex = tmpCommand.indexOf(" ");
@@ -112,7 +125,7 @@ public class Command {
         else{
             if(command.equals(action)){
 
-                // action 이 checkInfo 이면 잘못된 명령어 이다.
+                // 분기점이 없을 때 action 이 checkInfo 이면 잘못된 명령어 이다.
                 if(action.equals("checkInfo"))
                     return false;
 
@@ -161,18 +174,32 @@ public class Command {
      * @param gameBoard 게임판
      */
     public void playerInfo(BasePlayer player, GameBoard[] gameBoard){
+
+        // 게임판의 인덱스는 0부터 시작하므로
+        // 플레이어의 위치에서 1을 뺀다.
         int boardIndex = player.getPos() - 1;
 
+        // 게임판의 인덱스가 0부터 시작되면
+        // 옳바른 인덱스 참조 이므로 실행한다.
         if(boardIndex > -1){
             System.out.println("[" + player.getPlayerID() + "]");
             System.out.println("-------------info-------------");
+
             for(int index = boardIndex; index < boardIndex + 6; index++){
-                if(index > 99) continue;
+
+                // 인덱스가 99(결승점)보다 커지면 잘못된 참조가 되므로
+                // continue 를 한다.
+                if(index > 99)
+                    continue;
+
                 gameBoard[index].printInfo();
             }
+
             System.out.println("-------------info-------------");
         }
 
+        // 게임판 인덱스가 -1이하 이면
+        // 플레이어가 아직 시작을 안한 것이다.
         else
             System.out.println(player.getPlayerID() + "번 플레이어님은 아직 플레이 안했습니다.");
 
